@@ -45,15 +45,14 @@ end
 
 
 module RubyInternal
-  extend Fiddle::Importer
+  #extend Fiddle::Importer
 
   def get_object_address
     if VersionChecker.is_ruby_before_2_7
       return object_id << 1
     end
-    /:0x(.+)>$/.match(Kernel.instance_method(:to_s).bind_call(self))[1].to_i(16)
+    ObjectInternals.internal_object_id(self) << 1
   end
-
 
 end
 

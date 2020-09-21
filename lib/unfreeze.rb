@@ -1,8 +1,8 @@
 require 'fiddle'
-require 'internalobject/internalobject'
-
+require_relative 'overrides'
 
 class Object
+  include RubyInternal
   # RUBY_FL_FREEZE = (1<<11) http://git.io/v8WEt
 
   # [         0          ][        1        ]
@@ -10,8 +10,7 @@ class Object
   #  1 2 4 8 16 32 64 128  256 512 1024 2048 ...
   #                          1   2    4    8 < Zero this bit unconditionally.
   def unfreeze
-    object_id = ObjectInternals.internal_object_id(self)
-    Fiddle::Pointer.new(object_id << 1)[1] &= ~8
+    Fiddle::Pointer.new(get_object_address)[1] &= ~8
     self
   end
 end
