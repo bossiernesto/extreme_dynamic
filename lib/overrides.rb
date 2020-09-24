@@ -1,70 +1,109 @@
 require 'fiddle'
 require 'fiddle/import'
-require 'internalobject/internalobject'
 
 module RubyConstants
-  T_NONE   = 0x00
-  T_NIL    = 0x01
-  T_OBJECT = 0x02
-  T_CLASS  = 0x03
-  T_A = 0x04
-  T_MODULE = 0x05
-  T_FLOAT  = 0x06
-  T_STRING = 0x07
-  T_REGEXP = 0x08
-  T_ARRAY  = 0x09
-  T_FIXNUM = 0x0a
-  T_HASH   = 0x0b
-  T_STRUCT = 0x0c
-  T_BIGNUM = 0x0d
-  T_FILE   = 0x0e
+  T_NONE     = 0x00 #< Non-object (sweeped etc.) 
 
-  T_TRUE   = 0x10
-  T_FALSE  = 0x11
-  T_DATA   = 0x12
-  T_MATCH  = 0x13
-  T_SYMBOL = 0x14
+  T_OBJECT   = 0x01 #< @see struct ::RObject 
+  T_CLASS    = 0x02 #< @see struct ::RClass and ::rb_cClass 
+  T_MODULE   = 0x03 #< @see struct ::RClass and ::rb_cModule 
+  T_FLOAT    = 0x04 #< @see struct ::RFloat 
+  T_STRING   = 0x05 #< @see struct ::RString 
+  T_REGEXP   = 0x06 #< @see struct ::RRegexp 
+  T_ARRAY    = 0x07 #< @see struct ::RArray 
+  T_HASH     = 0x08 #< @see struct ::RHash 
+  T_STRUCT   = 0x09 #< @see struct ::RStruct 
+  T_BIGNUM   = 0x0a #< @see struct ::RBignum 
+  T_FILE     = 0x0b #< @see struct ::RFile 
+  T_DATA     = 0x0c #< @see struct ::RTypedData 
+  T_MATCH    = 0x0d #< @see struct ::RMatch 
+  T_COMPLEX  = 0x0e #< @see struct ::RComplex 
+  T_RATIONAL = 0x0f #< @see struct ::RRational 
 
-  T_BLOCK  = 0x1b
-  T_UNDEF  = 0x1c
-  T_VARMAP = 0x1d
-  T_SCOPE  = 0x1e
-  T_NODE   = 0x1f
+  T_NIL      = 0x11 #< @see ::Qnil 
+  T_TRUE     = 0x12 #< @see ::Qfalse 
+  T_FALSE    = 0x13 #< @see ::Qtrue 
+  T_SYMBOL   = 0x14 #< @see struct ::RSymbol 
+  T_FIXNUM   = 0x15 #< Integers formerly known as Fixnums. 
+  T_UNDEF    = 0x16 #< @see ::Qundef 
+
+  T_IMEMO    = 0x1a #< @see struct ::RIMemo 
+  T_NODE     = 0x1b #< @see struct ::RNode 
+  T_ICLASS   = 0x1c #< Hidden classes known as IClasses. 
+  T_ZOMBIE   = 0x1d #< @see struct ::RZombie 
+  T_MOVED    = 0x1e #< @see struct ::RMoved 
 
   T_MASK   = 0x1f
-    # constants
+  # constants
 end
 
-class VersionChecker
-  RUBY_2_7 = '2.7.0'
+module RubyInternalAliases
 
-  def self.is_ruby_before_2_7
-    Gem::Version.new(RUBY_VERSION) < Gem::Version.new(RUBY_2_7)
-  end
 end
 
+module RubyInternalStructs
+  extend Fiddle::Importer
+  extend self
 
-module RubyInternal
-  #extend Fiddle::Importer
-
-  def get_object_address
-    if VersionChecker.is_ruby_before_2_7
-      return object_id << 1
-    end
-    ObjectInternals.internal_object_id(self) << 1
+  def typealias(alias_type, orig_type)
+    @type_alias ||= {}
+    super
   end
 
-end
+  typealias "VALUE", "unsigned long"
+  typealias "ID", "unsigned long"
+  typealias "ulong", "unsigned long"
+  typealias("uint32_t", "unsigned int")
+  typealias("uint64_t", "unsigned long long")
 
-class Integer
-  def ptr2ref
-    if self % 4 == 0
-      Fiddle::Pointer.new(self).to_i
-    else
-      raise ArgumentError, 'invalid as a pointer'
-    end
-  end
-end
+  FL_USHIFT    = 12
+  FL_USER0     = 1 << (FL_USHIFT + 0)
+  FL_USER1     = 1 << (FL_USHIFT + 1)
+  FL_USER2     = 1 << (FL_USHIFT + 2)
+  FL_USER3     = 1 << (FL_USHIFT + 3)
+  FL_USER4     = 1 << (FL_USHIFT + 4)
+  FL_USER5     = 1 << (FL_USHIFT + 5)
+  FL_USER6     = 1 << (FL_USHIFT + 6)
+  FL_USER7     = 1 << (FL_USHIFT + 7)
+  FL_USER8     = 1 << (FL_USHIFT + 8)
+  FL_USER9     = 1 << (FL_USHIFT + 9)
+  FL_USER10     = 1 << (FL_USHIFT + 10)
+  FL_USER11     = 1 << (FL_USHIFT + 11)
+  FL_USER12     = 1 << (FL_USHIFT + 12)
+  FL_USER13     = 1 << (FL_USHIFT + 13)
+  FL_USER14     = 1 << (FL_USHIFT + 14)
+  FL_USER15     = 1 << (FL_USHIFT + 15)
+  FL_USER16     = 1 << (FL_USHIFT + 16)
+  FL_USER17     = 1 << (FL_USHIFT + 17)
+  FL_USER18     = 1 << (FL_USHIFT + 18)
 
-#RBasic
-#https://github.com/ruby/ruby/blob/92861a11633b079c9dd50599baa6841a739c741d/include/ruby/ruby.h#L865
+  FL_SINGLETON = FL_USER0
+  ELTS_SHARED = FL_USER2
+
+  ## ruby_fl_type
+  FL_WB_PROTECTED = (1<<5),
+  FL_PROMOTED0    = (1<<5),
+  FL_PROMOTED1    = (1<<6),
+  FL_PROMOTED     = FL_PROMOTED0 || FL_PROMOTED1,
+  FL_FINALIZE     = (1<<7),
+  FL_TAINT        = (1<<8),
+  FL_SHAREABLE    = (1<<8),
+  FL_UNTRUSTED    = FL_TAINT,
+  FL_SEEN_OBJ_ID  = (1<<9),
+  FL_EXIVAR       = (1<<10),
+  FL_FREEZE       = (1<<11),
+
+  # The flags are based on the enum ::ruby_fl_type
+  BasicStruct = [ 'VALUE flags', 'VALUE klass' ] #rbasic.h@45
+
+  #github.com/ruby/ruby/blob/92861a11633b079c9dd50599baa6841a739c741d/include/ruby/ruby.h#L865
+  RBasic = struct BasicStruct
+
+  RubyObjHeap = [
+      'uint32_t numiv',
+      'VALUE *ivptr',
+      "st_table *iv_tbl"
+  ]
+
+  RObject = struct(BasicStruct + RubyObjHeap)
+end

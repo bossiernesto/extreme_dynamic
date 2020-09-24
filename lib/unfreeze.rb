@@ -1,5 +1,5 @@
 require 'fiddle'
-require_relative 'overrides'
+require_relative 'ruby_internal'
 
 class Object
   include RubyInternal
@@ -14,8 +14,3 @@ class Object
     self
   end
 end
-
-str = 'foo'.freeze
-p str.frozen?
-str << 'bar' rescue p $!
-
