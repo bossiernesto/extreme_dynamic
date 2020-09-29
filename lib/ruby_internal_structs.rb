@@ -37,10 +37,6 @@ module RubyConstants
   # constants
 end
 
-module RubyInternalAliases
-
-end
-
 module RubyInternalStructs
   extend Fiddle::Importer
   extend self
