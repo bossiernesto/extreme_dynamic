@@ -1,9 +1,10 @@
 require_relative '../lib/ruby_internal'
-describe RubyInternal do
+require 'spec_helper'
 
-  context 'get_object_address' do
+describe RubyInternal do
+  context '#get_object_address' do
     let(:object) { Object.new }
-    let(:expected_hex_object_id_value) { /:0x(.+)>$/.match(Kernel.instance_method(:to_s).bind_call(object))[1].to_i(16) }
+    let(:expected_hex_object_id_value) { /:0x(.+)>$/.match(Kernel.instance_method(:to_s).bind(object).call)[1].to_i(16) }
 
     before do
       object.class.class_eval do
@@ -35,7 +36,7 @@ describe RubyInternal do
       end
 
       #define INT2FIX(i) ((VALUE)(((long)(i))<<1 | FIXNUM_FLAG))
-      context 'with ' do
+      context 'with integers' do
         let(:test_numbers) { [0,1,2,3].map { |x| [x, x.int_2_fix]} }
 
           it "returns the internal when " do
@@ -43,6 +44,28 @@ describe RubyInternal do
               expect(val.get_object_address).to eq(expected)
             end
           end
+      end
+    end
+
+    context 'when we have symbols' do
+      let(:test_symbol) { :test }
+
+      before do
+        class Symbol
+          include RubyInternal
+        end
+      end
+
+      it 'should be the expected calculation of the object address' do
+        expect(test_symbol.get_object_address).to eq(expected_sym_to_id(test_symbol))
+      end
+
+      context 'when we have another symbol' do
+        let(:test_symbol) { :another_symbol }
+
+        it 'should be the expected calculation of the object address' do
+          expect(test_symbol.get_object_address).to eq(expected_sym_to_id(test_symbol))
+        end
       end
     end
   end

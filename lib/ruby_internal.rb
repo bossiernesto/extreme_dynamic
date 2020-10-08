@@ -2,7 +2,6 @@ require_relative 'version_checker'
 require 'internalobject/internalobject'
 
 module RubyInternal
-  #extend Fiddle::Importer
 
   def get_object_address
     internal_object_id = VersionChecker.is_ruby_before_2_7 ? object_id : ObjectInternals.internal_object_id(self)
@@ -11,9 +10,19 @@ module RubyInternal
     internal_object_id << 1
   end
 
+  def get_pointer(*args)
+    raise ArgumentError, "Can't get the pointer of a direct value" if is_direct_value?
+
+    Fiddle::Pointer.new(get_object_address, *args)
+  end
+
+  def is_direct_value?
+    [Integer, Symbol, NilClass, TrueClass, FalseClass].any? { |klass| klass === self }
+  end
+
   #INT2FIX(i) ((VALUE)(((long)(i))<<1 | FIXNUM_FLAG))
   def int_2_fix
-    raise TypeError unless self.is_a? Fixnum
+    raise TypeError unless self.is_a? Integer
 
     (self << 1) | 1
   end

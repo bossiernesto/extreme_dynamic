@@ -40,6 +40,8 @@ module RubyConstants
   RUBY_Qtrue  = 0x14 #* ...0001 0100 */
   RUBY_Qnil   = 0x08 #* ...0000 1000 */
   RUBY_Qundef = 0x34 #* ...0011 0100 */
+
+  RVALUE_size = 0x28
 end
 
 module RubyInternalStructs

@@ -24,9 +24,18 @@ static int mIs_primitive_object(VALUE self, VALUE object) {
    return STATIC_SYM_P(object) || FLONUM_P(object) || SPECIAL_CONST_P(object);
 }
 
+static VALUE mSymbol_to_id(VALUE self, VALUE object) {
+    if STATIC_SYM_P(object){
+        return (SYM2ID(object));
+    }
+
+    return Qnil;
+}
+
 void Init_internalobject(void) {
   VALUE ObjectInternals = rb_define_module("ObjectInternals");
 
   rb_define_singleton_method(ObjectInternals, "internal_object_id", mInternal_object_id, 1);
   rb_define_singleton_method(ObjectInternals, "is_primitive_object?", mIs_primitive_object, 1);
+  rb_define_singleton_method(ObjectInternals, "symbol_to_id", mSymbol_to_id, 1);
 }

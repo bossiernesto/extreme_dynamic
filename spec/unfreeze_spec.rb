@@ -1,4 +1,5 @@
 require_relative '../lib/unfreeze'
+require 'spec_helper'
 
 describe 'unfreeze' do
   let(:frozen_instance) { Object.new.freeze }

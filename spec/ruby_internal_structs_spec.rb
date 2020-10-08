@@ -1,4 +1,5 @@
 require_relative '../lib/ruby_internal_structs'
+require 'spec_helper'
 
 describe RubyInternalStructs do
 

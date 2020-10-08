@@ -10,11 +10,7 @@ class Object
   #  1 2 4 8 16 32 64 128  256 512 1024 2048 ...
   #                          1   2    4    8 < Zero this bit unconditionally.
   def unfreeze
-    Fiddle::Pointer.new(get_object_address)[1] &= ~8
+    get_pointer[1] &= ~8
     self
-  end
-
-  def is_direct_value?
-    [Fixnum, Symbol, NilClass, TrueClass, FalseClass].any? { |klass| klass === self }
   end
 end
