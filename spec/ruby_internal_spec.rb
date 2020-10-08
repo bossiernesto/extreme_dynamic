@@ -1,6 +1,4 @@
 require_relative '../lib/ruby_internal'
-
-
 describe RubyInternal do
 
   context 'get_object_address' do
@@ -24,29 +22,28 @@ describe RubyInternal do
         end
       end
 
-
       it 'False should yield ' do
-        expect(false.get_object_address).to eq(0)
+        expect(false.get_object_address).to eq(RubyConstants::RUBY_Qfalse)
       end
 
       it 'True should yield ' do
-        expect(true.get_object_address).to eq(40)
+        expect(true.get_object_address).to eq(RubyConstants::RUBY_Qtrue)
       end
 
       it 'Nil should yield ' do
-        expect(nil.get_object_address).to eq(16)
+        expect(nil.get_object_address).to eq(RubyConstants::RUBY_Qnil)
       end
 
-      #
-      # #define INT2FIX(i) ((VALUE)(((long)(i))<<1 | FIXNUM_FLAG))
-      #  122  #define FIXNUM_FLAG 0x01
-      expected_values = [[0,2], [1, 6], [2, 10], [3, 14]]
-      expected_values.each do |val, expected|
-        it "returns #{expected} when number is #{val}" do
-          expect(val.get_object_address).to eq(expected)
-        end
+      #define INT2FIX(i) ((VALUE)(((long)(i))<<1 | FIXNUM_FLAG))
+      context 'with ' do
+        let(:test_numbers) { [0,1,2,3].map { |x| [x, x.int_2_fix]} }
+
+          it "returns the internal when " do
+            test_numbers.each do |val, expected|
+              expect(val.get_object_address).to eq(expected)
+            end
+          end
       end
     end
   end
-
 end

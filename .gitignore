@@ -4,3 +4,4 @@ old.rb
 tmp
 *.so
 Makefile
+.rakeTasks

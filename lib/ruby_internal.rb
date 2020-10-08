@@ -5,10 +5,17 @@ module RubyInternal
   #extend Fiddle::Importer
 
   def get_object_address
-    if VersionChecker.is_ruby_before_2_7
-      return object_id << 1
-    end
-    ObjectInternals.internal_object_id(self) << 1
+    internal_object_id = VersionChecker.is_ruby_before_2_7 ? object_id : ObjectInternals.internal_object_id(self)
+    return internal_object_id if ObjectInternals.is_primitive_object?(self)
+
+    internal_object_id << 1
+  end
+
+  #INT2FIX(i) ((VALUE)(((long)(i))<<1 | FIXNUM_FLAG))
+  def int_2_fix
+    raise TypeError unless self.is_a? Fixnum
+
+    (self << 1) | 1
   end
 
   def temporally_disable_gc

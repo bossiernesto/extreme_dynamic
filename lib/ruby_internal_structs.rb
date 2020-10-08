@@ -35,22 +35,26 @@ module RubyConstants
 
   T_MASK   = 0x1f
   # constants
+
+  RUBY_Qfalse = 0x00 #* ...0000 0000 */
+  RUBY_Qtrue  = 0x14 #* ...0001 0100 */
+  RUBY_Qnil   = 0x08 #* ...0000 1000 */
+  RUBY_Qundef = 0x34 #* ...0011 0100 */
 end
 
 module RubyInternalStructs
   extend Fiddle::Importer
-  extend self
 
-  def typealias(alias_type, orig_type)
+  def self.typealias(alias_type, orig_type)
     @type_alias ||= {}
     super
   end
 
-  typealias "VALUE", "unsigned long"
-  typealias "ID", "unsigned long"
-  typealias "ulong", "unsigned long"
-  typealias("uint32_t", "unsigned int")
-  typealias("uint64_t", "unsigned long long")
+  typealias('VALUE', 'unsigned long')
+  typealias('ID', 'unsigned long')
+  typealias('ulong', 'unsigned long')
+  typealias('uint32_t', 'unsigned int')
+  typealias('uint64_t', 'unsigned long long')
 
   FL_USHIFT    = 12
   FL_USER0     = 1 << (FL_USHIFT + 0)
@@ -102,4 +106,25 @@ module RubyInternalStructs
   ]
 
   RObject = struct(BasicStruct + RubyObjHeap)
+
+  RClassStruct = [
+      "rb_class_ext_t *ext",
+      "st_table *m_tbl",
+      "st_tble *iv_index_tbl"
+  ]
+  RClassSuper = [
+      "VALUE super",
+      "st_table *iv_tbl"
+  ]
+
+  RClass = struct(BasicStruct + RClassStruct)
+  RClass::Extension = struct(RClassSuper)
+
+  class RClass
+    # for compatibility
+    def iv_tbl; Extension.new(self.ext).iv_tbl end
+    def iv_tbl=(value); Extension.new(self.ext).iv_tbl = value end
+    def super; Extension.new(self.ext).super end
+    def super=(value); Extension.new(self.ext).super= value end
+  end
 end

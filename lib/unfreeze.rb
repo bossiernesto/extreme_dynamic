@@ -13,4 +13,8 @@ class Object
     Fiddle::Pointer.new(get_object_address)[1] &= ~8
     self
   end
+
+  def is_direct_value?
+    [Fixnum, Symbol, NilClass, TrueClass, FalseClass].any? { |klass| klass === self }
+  end
 end
