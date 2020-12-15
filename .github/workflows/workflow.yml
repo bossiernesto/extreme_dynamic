@@ -15,6 +15,8 @@ jobs:
         run: |
           gem install bundler
           bundler install
+      - name: Compile extensions
+        run: bundle exec rake compile    
       - name: Run tests
         run: bundler exec rspec spec
       - name: Upload coverage results    
