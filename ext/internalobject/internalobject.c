@@ -25,7 +25,7 @@ static int mIs_primitive_object(VALUE self, VALUE object) {
 }
 
 static VALUE mSymbol_to_id(VALUE self, VALUE object) {
-    if STATIC_SYM_P(object){
+    if(STATIC_SYM_P(object)){
         return (SYM2ID(object));
     }
 
