@@ -1,4 +1,4 @@
-name: Rails tests
+name: Extreme Dynamic tests
 on: [push,pull_request]
 jobs:
   rspec-test:
