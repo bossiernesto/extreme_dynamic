@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
 gem 'ffi'
-gem 'rspec'
-gem 'rake-compiler'
 gem 'pry'
+gem 'rake-compiler'
+gem 'rspec'
 gem 'rubocop'
