@@ -2,44 +2,44 @@ require 'fiddle'
 require 'fiddle/import'
 
 module RubyConstants
-  T_NONE     = 0x00 #< Non-object (sweeped etc.) 
+  T_NONE     = 0x00 # < Non-object (sweeped etc.) 
 
-  T_OBJECT   = 0x01 #< @see struct ::RObject 
-  T_CLASS    = 0x02 #< @see struct ::RClass and ::rb_cClass 
-  T_MODULE   = 0x03 #< @see struct ::RClass and ::rb_cModule 
-  T_FLOAT    = 0x04 #< @see struct ::RFloat 
-  T_STRING   = 0x05 #< @see struct ::RString 
-  T_REGEXP   = 0x06 #< @see struct ::RRegexp 
-  T_ARRAY    = 0x07 #< @see struct ::RArray 
-  T_HASH     = 0x08 #< @see struct ::RHash 
-  T_STRUCT   = 0x09 #< @see struct ::RStruct 
-  T_BIGNUM   = 0x0a #< @see struct ::RBignum 
-  T_FILE     = 0x0b #< @see struct ::RFile 
-  T_DATA     = 0x0c #< @see struct ::RTypedData 
-  T_MATCH    = 0x0d #< @see struct ::RMatch 
-  T_COMPLEX  = 0x0e #< @see struct ::RComplex 
-  T_RATIONAL = 0x0f #< @see struct ::RRational 
+  T_OBJECT   = 0x01 # < @see struct ::RObject 
+  T_CLASS    = 0x02 # < @see struct ::RClass and ::rb_cClass 
+  T_MODULE   = 0x03 # < @see struct ::RClass and ::rb_cModule 
+  T_FLOAT    = 0x04 # < @see struct ::RFloat 
+  T_STRING   = 0x05 # < @see struct ::RString 
+  T_REGEXP   = 0x06 # < @see struct ::RRegexp 
+  T_ARRAY    = 0x07 # < @see struct ::RArray 
+  T_HASH     = 0x08 # < @see struct ::RHash 
+  T_STRUCT   = 0x09 # < @see struct ::RStruct 
+  T_BIGNUM   = 0x0a # < @see struct ::RBignum 
+  T_FILE     = 0x0b # < @see struct ::RFile 
+  T_DATA     = 0x0c # < @see struct ::RTypedData 
+  T_MATCH    = 0x0d # < @see struct ::RMatch 
+  T_COMPLEX  = 0x0e # < @see struct ::RComplex 
+  T_RATIONAL = 0x0f # < @see struct ::RRational 
 
-  T_NIL      = 0x11 #< @see ::Qnil 
-  T_TRUE     = 0x12 #< @see ::Qfalse 
-  T_FALSE    = 0x13 #< @see ::Qtrue 
-  T_SYMBOL   = 0x14 #< @see struct ::RSymbol 
-  T_FIXNUM   = 0x15 #< Integers formerly known as Fixnums. 
-  T_UNDEF    = 0x16 #< @see ::Qundef 
+  T_NIL      = 0x11 # < @see ::Qnil 
+  T_TRUE     = 0x12 # < @see ::Qfalse 
+  T_FALSE    = 0x13 # < @see ::Qtrue 
+  T_SYMBOL   = 0x14 # < @see struct ::RSymbol 
+  T_FIXNUM   = 0x15 # < Integers formerly known as Fixnums. 
+  T_UNDEF    = 0x16 # < @see ::Qundef 
 
-  T_IMEMO    = 0x1a #< @see struct ::RIMemo 
-  T_NODE     = 0x1b #< @see struct ::RNode 
-  T_ICLASS   = 0x1c #< Hidden classes known as IClasses. 
-  T_ZOMBIE   = 0x1d #< @see struct ::RZombie 
-  T_MOVED    = 0x1e #< @see struct ::RMoved 
+  T_IMEMO    = 0x1a # < @see struct ::RIMemo 
+  T_NODE     = 0x1b # < @see struct ::RNode 
+  T_ICLASS   = 0x1c # < Hidden classes known as IClasses. 
+  T_ZOMBIE   = 0x1d # < @see struct ::RZombie 
+  T_MOVED    = 0x1e # < @see struct ::RMoved 
 
-  T_MASK   = 0x1f
+  T_MASK = 0x1f
   # constants
 
-  RUBY_Qfalse = 0x00 #* ...0000 0000 */
-  RUBY_Qtrue  = 0x14 #* ...0001 0100 */
-  RUBY_Qnil   = 0x08 #* ...0000 1000 */
-  RUBY_Qundef = 0x34 #* ...0011 0100 */
+  RUBY_Qfalse = 0x00 # * ...0000 0000 */
+  RUBY_Qtrue  = 0x14 # * ...0001 0100 */
+  RUBY_Qnil   = 0x08 # * ...0000 1000 */
+  RUBY_Qundef = 0x34 # * ...0011 0100 */
 
   RVALUE_size = 0x28
 end
@@ -96,37 +96,60 @@ module RubyInternalStructs
   FL_FREEZE       = (1<<11),
 
   # The flags are based on the enum ::ruby_fl_type
-  BasicStruct = [ 'VALUE flags', 'VALUE klass' ] #rbasic.h@45
+  BasicStruct = [ 'VALUE flags', 'VALUE klass' ].freeze # rbasic.h@45
 
-  #github.com/ruby/ruby/blob/92861a11633b079c9dd50599baa6841a739c741d/include/ruby/ruby.h#L865
+  # github.com/ruby/ruby/blob/92861a11633b079c9dd50599baa6841a739c741d/include/ruby/ruby.h#L865
   RBasic = struct BasicStruct
 
   RubyObjHeap = [
-      'uint32_t numiv',
-      'VALUE *ivptr',
-      "st_table *iv_tbl"
-  ]
+    'uint32_t numiv',
+    'VALUE *ivptr',
+    'st_table *iv_tbl'
+  ].freeze
+
+  RFloat = struct(BasicStruct + [
+    'double value'
+  ])
 
   RObject = struct(BasicStruct + RubyObjHeap)
 
   RClassStruct = [
-      "rb_class_ext_t *ext",
-      "st_table *m_tbl",
-      "st_tble *iv_index_tbl"
-  ]
+    'rb_class_ext_t *ext',
+    'st_table *m_tbl',
+    'st_tble *iv_index_tbl'
+  ].freeze
+
   RClassSuper = [
-      "VALUE super",
-      "st_table *iv_tbl"
-  ]
+    'VALUE super',
+    'st_table *iv_tbl'
+  ].freeze
 
   RClass = struct(BasicStruct + RClassStruct)
+  RModule = RClass
   RClass::Extension = struct(RClassSuper)
+  RClassExtensionSize = struct(RClassSuper).size
 
   class RClass
-    # for compatibility
-    def iv_tbl; Extension.new(self.ext).iv_tbl end
-    def iv_tbl=(value); Extension.new(self.ext).iv_tbl = value end
-    def super; Extension.new(self.ext).super end
-    def super=(value); Extension.new(self.ext).super= value end
+    def iv_tbl
+      extension.iv_tbl
+    end
+
+    def iv_tbl=(value)
+      extension.iv_tbl = value
+    end
+
+    def super
+      extension.super
+    end
+
+    def super=(value)
+      extension.super = value
+    end
+
+    private
+
+    def extension
+      Extension.new(ext)
+    end
   end
 end
